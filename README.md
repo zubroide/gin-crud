@@ -1,4 +1,4 @@
-# CRUD for GORM
+# CRUD for Gin
 
 ## Features
 
