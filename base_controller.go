@@ -20,15 +20,15 @@ func NewBaseController(logger gorm_crud.LoggerInterface) *BaseController {
 	return &BaseController{Logger: logger}
 }
 
-func (c BaseController) replySuccess(context *gin.Context, data interface{}) {
-	c.response(context, gin.H{"data": data, "status": StatusOk}, http.StatusOK)
+func (c BaseController) ReplySuccess(context *gin.Context, data interface{}) {
+	c.Response(context, gin.H{"data": data, "status": StatusOk}, http.StatusOK)
 }
 
-func (c BaseController) replyError(context *gin.Context, message string, code int) {
-	c.response(context, gin.H{"message": message, "status": StatusError}, code)
+func (c BaseController) ReplyError(context *gin.Context, message string, code int) {
+	c.Response(context, gin.H{"message": message, "status": StatusError}, code)
 }
 
-func (c BaseController) response(context *gin.Context, obj interface{}, code int) {
+func (c BaseController) Response(context *gin.Context, obj interface{}, code int) {
 	switch context.GetHeader("Accept") {
 		case "application/xml":
 			context.XML(code, obj)

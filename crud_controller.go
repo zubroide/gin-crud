@@ -53,83 +53,83 @@ func NewCrudController(service gorm_crud.CrudServiceInterface, parametersHydrato
 func (c CrudController) Get(context *gin.Context) {
 	recordId, err := strconv.Atoi(context.Params.ByName("id"))
 	if err != nil {
-		c.replyError(context, "Please specify record id", http.StatusBadRequest)
+		c.ReplyError(context, "Please specify record id", http.StatusBadRequest)
 		return
 	}
 
 	data, err := c.Service.GetItem(uint(recordId))
 
 	if err != nil {
-		c.replyError(context, "Record not found", http.StatusNotFound)
+		c.ReplyError(context, "Record not found", http.StatusNotFound)
 		return
 	}
 
-	c.replySuccess(context, data)
+	c.ReplySuccess(context, data)
 }
 
 func (c CrudController) List(context *gin.Context) {
 	parameters, err := c.ParametersHydrator.Hydrate(context)
 
 	if err != nil {
-		c.replyError(context, "Cant parse request parameters", http.StatusBadRequest)
+		c.ReplyError(context, "Cant parse request parameters", http.StatusBadRequest)
 		return
 	}
 
 	data, err := c.Service.GetList(parameters)
 
 	if err != nil {
-		c.replyError(context, "Data not found", http.StatusBadRequest)
+		c.ReplyError(context, "Data not found", http.StatusBadRequest)
 		return
 	}
 
-	c.replySuccess(context, data)
+	c.ReplySuccess(context, data)
 }
 
 func (c CrudController) Create(context *gin.Context) {
 	model := c.Service.GetModel()
 	data := reflect.New(reflect.TypeOf(model).Elem()).Interface()
 	if err := context.ShouldBindJSON(data); err != nil {
-		c.replyError(context, "Cant parse request", http.StatusBadRequest)
+		c.ReplyError(context, "Cant parse request", http.StatusBadRequest)
 		return
 	}
 	data = c.Service.Create(data)
-	c.replySuccess(context, data)
+	c.ReplySuccess(context, data)
 }
 
 func (c CrudController) Update(context *gin.Context) {
 	recordId, err := strconv.Atoi(context.Params.ByName("id"))
 	if err != nil {
-		c.replyError(context, "Cant parse request", http.StatusBadRequest)
+		c.ReplyError(context, "Cant parse request", http.StatusBadRequest)
 		return
 	}
 
 	data, err := c.Service.GetItem(uint(recordId))
 	if err != nil {
-		c.replyError(context, "Data not found", http.StatusBadRequest)
+		c.ReplyError(context, "Data not found", http.StatusBadRequest)
 		return
 	}
 
 	if err := context.ShouldBindJSON(data); err != nil {
-		c.replyError(context, "Cant parse request", http.StatusBadRequest)
+		c.ReplyError(context, "Cant parse request", http.StatusBadRequest)
 		return
 	}
 	data = c.Service.Update(data)
 
-	c.replySuccess(context, data)
+	c.ReplySuccess(context, data)
 }
 
 func (c CrudController) Delete(context *gin.Context) {
 	recordId, err := strconv.Atoi(context.Params.ByName("id"))
 	if err != nil {
-		c.replyError(context, "Please specify record id", http.StatusBadRequest)
+		c.ReplyError(context, "Please specify record id", http.StatusBadRequest)
 		return
 	}
 
 	err = c.Service.Delete(uint(recordId))
 	if err != nil {
-		c.replyError(context, "Data not found", http.StatusBadRequest)
+		c.ReplyError(context, "Data not found", http.StatusBadRequest)
 		return
 	}
 
-	c.replySuccess(context, nil)
+	c.ReplySuccess(context, nil)
 }
