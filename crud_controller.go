@@ -18,7 +18,7 @@ type BaseParametersHydrator struct {
 	ParametersHydratorInterface
 }
 
-func NewBaseParametersHydrator(logger gorm_crud.LoggerInterface) ParametersHydratorInterface {
+func NewBaseParametersHydrator(logger gorm_crud.LoggerInterface) *BaseParametersHydrator {
 	return &BaseParametersHydrator{Logger: logger}
 }
 
