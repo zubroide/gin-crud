@@ -7,6 +7,8 @@
 
 ## How to use
 
+https://github.com/zubroide/go-api-boilerplate
+
 Repository:
 
 ```go

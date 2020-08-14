@@ -14,12 +14,12 @@ type ParametersHydratorInterface interface {
 }
 
 type BaseParametersHydrator struct {
-	logger gorm_crud.LoggerInterface
+	Logger gorm_crud.LoggerInterface
 	ParametersHydratorInterface
 }
 
 func NewBaseParametersHydrator(logger gorm_crud.LoggerInterface) ParametersHydratorInterface {
-	return &BaseParametersHydrator{logger: logger}
+	return &BaseParametersHydrator{Logger: logger}
 }
 
 func (c BaseParametersHydrator) Hydrate(context *gin.Context) (gorm_crud.ListParametersInterface, error) {
@@ -41,13 +41,13 @@ type CrudControllerInterface interface {
 type CrudController struct {
 	CrudControllerInterface
 	*BaseController
-	service            gorm_crud.CrudServiceInterface
-	parametersHydrator ParametersHydratorInterface
+	Service            gorm_crud.CrudServiceInterface
+	ParametersHydrator ParametersHydratorInterface
 }
 
 func NewCrudController(service gorm_crud.CrudServiceInterface, parametersHydrator ParametersHydratorInterface, logger gorm_crud.LoggerInterface) *CrudController {
 	controller := NewBaseController(logger)
-	return &CrudController{BaseController: controller, service: service, parametersHydrator: parametersHydrator}
+	return &CrudController{BaseController: controller, Service: service, ParametersHydrator: parametersHydrator}
 }
 
 func (c CrudController) Get(context *gin.Context) {
@@ -57,7 +57,7 @@ func (c CrudController) Get(context *gin.Context) {
 		return
 	}
 
-	data, err := c.service.GetItem(uint(recordId))
+	data, err := c.Service.GetItem(uint(recordId))
 
 	if err != nil {
 		c.replyError(context, "Record not found", http.StatusNotFound)
@@ -68,14 +68,14 @@ func (c CrudController) Get(context *gin.Context) {
 }
 
 func (c CrudController) List(context *gin.Context) {
-	parameters, err := c.parametersHydrator.Hydrate(context)
+	parameters, err := c.ParametersHydrator.Hydrate(context)
 
 	if err != nil {
 		c.replyError(context, "Cant parse request parameters", http.StatusBadRequest)
 		return
 	}
 
-	data, err := c.service.GetList(parameters)
+	data, err := c.Service.GetList(parameters)
 
 	if err != nil {
 		c.replyError(context, "Data not found", http.StatusBadRequest)
@@ -86,13 +86,13 @@ func (c CrudController) List(context *gin.Context) {
 }
 
 func (c CrudController) Create(context *gin.Context) {
-	model := c.service.GetModel()
+	model := c.Service.GetModel()
 	data := reflect.New(reflect.TypeOf(model).Elem()).Interface()
 	if err := context.ShouldBindJSON(data); err != nil {
 		c.replyError(context, "Cant parse request", http.StatusBadRequest)
 		return
 	}
-	data = c.service.Create(data)
+	data = c.Service.Create(data)
 	c.replySuccess(context, data)
 }
 
@@ -103,7 +103,7 @@ func (c CrudController) Update(context *gin.Context) {
 		return
 	}
 
-	data, err := c.service.GetItem(uint(recordId))
+	data, err := c.Service.GetItem(uint(recordId))
 	if err != nil {
 		c.replyError(context, "Data not found", http.StatusBadRequest)
 		return
@@ -113,7 +113,7 @@ func (c CrudController) Update(context *gin.Context) {
 		c.replyError(context, "Cant parse request", http.StatusBadRequest)
 		return
 	}
-	data = c.service.Update(data)
+	data = c.Service.Update(data)
 
 	c.replySuccess(context, data)
 }
@@ -125,7 +125,7 @@ func (c CrudController) Delete(context *gin.Context) {
 		return
 	}
 
-	err = c.service.Delete(uint(recordId))
+	err = c.Service.Delete(uint(recordId))
 	if err != nil {
 		c.replyError(context, "Data not found", http.StatusBadRequest)
 		return

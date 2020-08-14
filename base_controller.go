@@ -13,11 +13,11 @@ type BaseControllerInterface interface {
 }
 
 type BaseController struct {
-	logger gorm_crud.LoggerInterface
+	Logger gorm_crud.LoggerInterface
 }
 
 func NewBaseController(logger gorm_crud.LoggerInterface) *BaseController {
-	return &BaseController{logger: logger}
+	return &BaseController{Logger: logger}
 }
 
 func (c BaseController) replySuccess(context *gin.Context, data interface{}) {
